@@ -64,6 +64,12 @@ class Blockchain {
     _addBlock(block) {
         let self = this;
         return new Promise(async (resolve, reject) => {
+           let errors = await self.validateChain();
+           if(errors.length > 0) {
+                console.log(errors);
+                reject(Error("Chain is not valid"));
+           }
+
            block.height = self.height+1;
            block.time = new Date().getTime().toString().slice(0, -3);
            if(self.chain.length > 0) {
@@ -197,7 +203,7 @@ class Blockchain {
         let errorLog = [];
         return new Promise(async (resolve, reject) => {
             if(self.height == 0) {
-                resolve("Chain is valid.");
+                resolve(errorLog);
             }
             for(let i = 1; i < self.height; i++) {
                 let block = self.chain[i];
